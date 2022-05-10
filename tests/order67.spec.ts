@@ -13,27 +13,31 @@ const SEARCH_LOCATOR =
 ;
 
 test.describe('Execute Order 67', () => {
-  test('should allow me to search order 67 without any problem', async ({ page }) => {
+  test('should allow me to execute the order 67 without any problem', async ({ page }) => {
     // close cookies popup.
     await page.locator('xpath=//yt-formatted-string[.="Reject all"]').click();
-    await page.locator('xpath=//tp-yt-paper-dialog').isHidden()
+    await page.locator('xpath=//tp-yt-paper-dialog').isHidden();
 
     // reload the page to avoid cookies animation
-    await page.reload()
+    await page.reload();
 
     // insert the string to search.
-    await page.locator(SEARCH_LOCATOR).fill(SEARCH_ITEM[0]);
-    await page.locator("xpath=//button[@id='search-icon-legacy']").click();
+    await page.locator(SEARCH_LOCATOR).waitFor();
+    await page.type(SEARCH_LOCATOR, SEARCH_ITEM[0]);
+    await page.click('xpath=//button[@id="search-icon-legacy"]');
+    await page.waitForTimeout(3000)
 
-    // Make sure the search input is filled.
-    await expect(page.locator(SEARCH_LOCATOR)).toHaveText([
-      SEARCH_ITEM[0]
-    ]);
+    // Make sure the title is properly filled.
+    await expect(page).toHaveTitle('execute order 67 - YouTube');
 
-    await clickFirstResultInPage(page);
+    //open the first one
+    await page.click('xpath=(//ytd-video-renderer//a[@id="thumbnail"])[1]');
+
+    await logTheAmazingUrl(page);
   });
 });
 
-async function clickFirstResultInPage(page: Page) {
-    await page.locator('xpath=(//ytd-video-renderer//a[@id="thumbnail"])[0]').click();
+async function logTheAmazingUrl(page: Page) {
+  const url = page.url();
+  console.log(url);
 }
